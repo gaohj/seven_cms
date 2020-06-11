@@ -29,3 +29,7 @@ def login_view(request):
     else:
         errors = form.get_errors()
         return restful.params_error(message=errors)
+
+#注册视图
+def register_view(request):
+    pass
