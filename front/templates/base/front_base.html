@@ -37,7 +37,7 @@
                             {% if user.is_staff %}
                                  <a href="{% url 'cms:index' %}">管理系统</a>
                             {% endif %}
-                                <a href="{% url 'qfauth:logout' %}">退出登录</a>
+                                <a href="{% url 'cmsauth:logout' %}">退出登录</a>
 
                     </div>
                     {% else %}
@@ -132,7 +132,7 @@
                                     <input type="text" class="form-control" name="img_captcha" placeholder="图形验证码">
                                 </div>
                                 <div class="input-group-addon">
-                                    <img src="" alt="" class="img-captcha" style="cursor:pointer;">
+                                    <img src="{% url 'cmsauth:image_captcha' %}" alt="" class="img-captcha" style="cursor:pointer;">
                                 </div>
                             </div>
                             <div class="input-group">
