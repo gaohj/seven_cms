@@ -9,13 +9,14 @@ class LoginForm(forms.Form,FromMixin):
     remember = forms.IntegerField(required=False)
 
 class RegisterForm(forms.Form,FromMixin):
-    telephone = forms.CharField(max_length=11,validators=[validators.RegexValidator(r'1[3-8]\d{9}',message='请输入正确的手机号')])
+    telephone = forms.CharField(max_length=11)
     username = forms.CharField(max_length=20)
-    password1 = forms.CharField(max_length=30,min_length=6,error_messages={"max_length":"密码最多不能超过30个字符","min_length":"最短不能少于6个字符"})
-    password2 = forms.CharField(max_length=30,min_length=6,error_messages={"max_length":"密码最多不能超过30个字符","min_length":"最短不能少于6个字符"})
-    image_captcha = forms.CharField(max_length=5,min_length=5)
-    sms_captcha = forms.CharField(max_length=5,min_length=5)
-
+    password1 = forms.CharField(max_length=20, min_length=6,
+                               error_messages={"max_length": "密码最多不能超过20个字符！", "min_length": "密码最少不能少于6个字符！"})
+    password2 = forms.CharField(max_length=20, min_length=6,
+                                error_messages={"max_length": "密码最多不能超过20个字符！", "min_length": "密码最少不能少于6个字符！"})
+    img_captcha = forms.CharField(min_length=4,max_length=4)
+    sms_captcha = forms.CharField(min_length=4,max_length=4)
 
     def clean(self):
         cleaned_data = super(RegisterForm, self).clean()
@@ -24,18 +25,24 @@ class RegisterForm(forms.Form,FromMixin):
         password2 = cleaned_data.get('password2')
 
         if password1 != password2:
-            raise forms.ValidationError('两次密码输入不一致')
+            raise forms.ValidationError('两次密码输入不一致！')
 
-        image_captcha = cleaned_data.get('image_captcha')
-        catch_image_captcha = cache.get(image_captcha.lower())
-        print(catch_image_captcha)
-        if not catch_image_captcha or catch_image_captcha.lower() != image_captcha.lower():
-            raise forms.ValidationError('图形验证码有误')
+        img_captcha = cleaned_data.get('img_captcha')
+        print(img_captcha)
+        cached_img_captcha = cache.get(img_captcha.lower())
+        if not cached_img_captcha or cached_img_captcha.lower() != img_captcha.lower():
+            raise forms.ValidationError("图形验证码错误！")
 
         telephone = cleaned_data.get('telephone')
-        existes = User.objects.filter(telephone=telephone).exists()
-        if existes:
-            raise forms.ValidationError('该手机号已经存在')
+        sms_captcha = cleaned_data.get('sms_captcha')
+        print(sms_captcha)
+        cached_sms_captcha = cache.get(telephone)
+
+        if not cached_sms_captcha or cached_sms_captcha.lower() != sms_captcha.lower():
+            raise forms.ValidationError('短信验证码错误！')
+
+        exists = User.objects.filter(telephone=telephone).exists()
+        if exists:
+            forms.ValidationError('该手机号码已经被注册！')
 
         return cleaned_data
-

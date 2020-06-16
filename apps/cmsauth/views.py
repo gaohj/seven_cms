@@ -44,8 +44,7 @@ def register_view(request):
         telephone = form.cleaned_data.get('telephone')
         username = form.cleaned_data.get('username')
         password = form.cleaned_data.get('password1')
-        image_captcha = form.cleaned_data.get('image_captcha')
-        print(telephone,username,password,image_captcha)
+        print(telephone,username,password)
         user = User.objects.create_user(telephone=telephone,username=username,password=password)
         login(request,user) #注册成功以后直接登录
         return restful.success()
@@ -77,9 +76,11 @@ def image_captcha(request):
 def sms_captcha(request):
     code = Captcha.gene_text(4)
     print("短信验证码:%s" % code)
+
     # #接收手机号
     # #/sms_captcha/?telephone=xxx
     telephone = request.GET.get('telephone')
+    cache.set(telephone, code,5*60)
     send_sms(telephone,code)
     return restful.success()
     #调用第三方发送短信验证码的接口

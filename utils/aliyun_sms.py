@@ -5,7 +5,7 @@
 
 from aliyunsdkcore.client import AcsClient
 from aliyunsdkcore.request import CommonRequest
-client = AcsClient('LTAI4G24j5rNWCraZe8NDq3o', 'q0tO4HhyzZA18RVOZVCmH2jHZfdvWB', 'cn-hangzhou')
+client = AcsClient('LTAI4FyBZRhbE32n2rDvMXnD', '0wMtr0qVtwXvSQHsjX57IwWPfbe97x', 'cn-hangzhou')
 
 def send_sms(phone,code):
     request = CommonRequest()
